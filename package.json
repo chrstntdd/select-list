@@ -1,15 +1,20 @@
 {
   "name": "select-list",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/select-list.js",
+  "module": "dist/stockroom.mjs",
+  "umd:main": "dist/select-list.umd.js",
+  "source": "src/index.ts",
+  "typings": "dist/src/index.d.ts",
   "author": "chrstntdd <christiantodd27@icloud.com>",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "microbundle -i src/index.ts -o dist/select-list.js",
+    "build": "microbundle -o dist/select-list.js",
     "dev": "microbundle watch",
     "test": "./node_modules/.bin/jest --coverage",
-    "test:auto": "./node_modules/.bin/jest --watch"
+    "test:auto": "./node_modules/.bin/jest --watch",
+    "release": "npm t && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
