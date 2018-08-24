@@ -24,6 +24,15 @@
       "js",
       "node"
     ],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coverageReporters": [
+      "lcov"
+    ],
+    "coveragePathIgnorePatterns": [
+      "\\.d\\.ts$"
+    ],
     "moduleNameMapper": {
       "^@[/](.*)": "<rootDir>/src/$1"
     },
