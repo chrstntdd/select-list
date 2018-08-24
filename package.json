@@ -1,0 +1,38 @@
+{
+  "name": "select-list",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "author": "chrstntdd <christiantodd27@icloud.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "microbundle -i src/index.ts -o dist/select-list.js",
+    "dev": "microbundle watch",
+    "test": "./node_modules/.bin/jest --coverage",
+    "test:auto": "./node_modules/.bin/jest --watch"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "jest": "^23.5.0",
+    "microbundle": "^0.6.0",
+    "ts-jest": "^23.1.4",
+    "typescript": "^3.0.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "node"
+    ],
+    "moduleNameMapper": {
+      "^@[/](.*)": "<rootDir>/src/$1"
+    },
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "\\.spec\\.ts$",
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.js$"
+    ]
+  }
+}
