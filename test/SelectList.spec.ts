@@ -132,5 +132,13 @@ describe('SelectList', () => {
 
       expect(sel.after()).toEqual(['d', 'e']);
     });
+
+    it("should be a copy of the elements in the `after` section so internal state can't be mutated", () => {
+      const sel = new SelectList(testArr, 2);
+
+      sel.after().push('d');
+
+      expect(sel.after()).toEqual(['d', 'e']);
+    });
   });
 });
