@@ -1,96 +1,131 @@
-class SelectList<a> {
-  private _before: a[];
-  private _selected: a;
-  private _after: a[];
-
-  constructor(arr: a[], selectedIndex?: number) {
-    selectedIndex = selectedIndex || 0;
-    this._before = arr.slice(0, selectedIndex);
-    this._selected = arr[selectedIndex];
-    this._after = arr.slice(selectedIndex + 1);
-  }
-
+interface SelectList<a> {
   /**
    * @description
-   * Shift forwards by one element unless there are no more elements in the `after` section
+   * Shift to the selected element based on the provided predicate function
    */
-  public next(): SelectList<a> {
-    if (this._after.length) {
-      const afterCopy = [...this._after];
-      const nextCurrent = afterCopy.shift();
-
-      return new SelectList(
-        [...this._before, this._selected, nextCurrent, ...afterCopy],
-        this._before.length + 1
-      );
-    }
-    return this;
-  }
-
-  /**
-   * @description
-   * Shift back by one element unless there are no more elements in the `before` section
-   */
-  public prev(): SelectList<a> {
-    if (this._before.length) {
-      const beforeCopy = [...this._before];
-      const nextCurrent = beforeCopy.pop();
-
-      return new SelectList(
-        [...beforeCopy, nextCurrent, this._selected, ...this._after],
-        this._before.length - 1
-      );
-    }
-    return this;
-  }
-
+  select: <a>(predicateFn: (element: a) => boolean) => SelectList<a>;
   /**
    * @description
    * Apply a function to every element in the SelectList
    */
-  public map<b>(fn: (element: a, index?: number, array?: a[]) => b): SelectList<b> {
-    return new SelectList(
-      [...this._before.map(fn), fn(this._selected), ...this._after.map(fn)],
-      this._before.length
-    );
-  }
-
+  map: <b>(fn: (element: a, index?: number, position?: Position) => b) => SelectList<b>;
   /**
    * @description
-   * Return the entire collection as a single array
+   *s he entire collection as a single array
    */
-  public toArray(): a[] {
-    return [...this._before, this._selected, ...this._after];
-  }
-
+  toArray: () => a[];
   /**
    * @description
    * Return the size of the entire collection
    */
-  public size(): number {
-    return this._before.length + 1 + this._after.length;
-  }
+  size: () => number;
   /**
    * @description
-   * Return the currently selected element
+   * The currently selected element
    */
-  public selected(): a {
-    return this._selected;
-  }
+  selected: a;
   /**
    * @description
-   * Returns a shallow copy of the elements currently in the `before` section of the SelectList
+   * The elements currently in the `before` section of the SelectList
    */
-  public before(): a[] {
-    return [...this._before];
-  }
+  before: a[];
   /**
    * @description
-   * Returns a shallow copy of the elements currently in the `after` section of the SelectList
+   * The elements currently in the `after` section of the SelectList
    */
-  public after(): a[] {
-    return [...this._after];
+  after: a[];
+}
+
+/**
+ * @private
+ */
+function selectHelp(
+  predicateFn: (element: any) => boolean,
+  before: any[],
+  selected: any,
+  after: any[]
+): [any[], any, any[]] | null {
+  // ( [], [] ) ->
+  if (!before.length && !after.length) return null;
+
+  // ( [], head :: rest ) ->
+  if (!before.length && after.length) {
+    const [head, ...rest] = after;
+
+    if (predicateFn(selected)) return [before, selected, after];
+    else if (predicateFn(head)) return [[...before, selected], head, [...after]];
+    else {
+      const maybeSelectListParts = selectHelp(predicateFn, [], head, rest);
+
+      if (maybeSelectListParts === null) return null;
+      return [
+        [selected, ...maybeSelectListParts[0]],
+        maybeSelectListParts[1],
+        maybeSelectListParts[2]
+      ];
+    }
   }
+
+  // ( head :: rest, _ ) ->
+  const [head, ...rest] = before;
+
+  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
+  else {
+    const maybeSelectListParts = selectHelp(predicateFn, rest, selected, after);
+
+    if (maybeSelectListParts === null) return null;
+    return [[head, ...maybeSelectListParts[0]], maybeSelectListParts[1], maybeSelectListParts[2]];
+  }
+}
+
+/**
+ * @private
+ */
+function map(
+  array: any[],
+  callback: (element: any, index?: number, position?: Position) => any,
+  position: Position
+) {
+  let result = [];
+  for (let i = 0; i < array.length; i++) {
+    result.push(callback(array[i], i, position));
+  }
+  return result;
+}
+
+type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
+
+function SelectList<a>(before: a[], selected: a, after: a[]): SelectList<a> {
+  return {
+    select<a>(predicateFn: (element: a) => boolean): SelectList<a> {
+      const maybeSelectListParts = selectHelp(predicateFn, before, selected, after);
+      if (maybeSelectListParts === null) return this;
+
+      return SelectList(maybeSelectListParts[0], maybeSelectListParts[1], maybeSelectListParts[2]);
+    },
+
+    map<b>(fn: (element: a, index?: number, position?: Position) => b): SelectList<b> {
+      return SelectList(
+        map(before, fn, 'BEFORE'),
+        fn(selected, before.length, 'SELECTED'),
+        map(after, fn, 'AFTER')
+      );
+    },
+
+    toArray(): a[] {
+      return [...before, selected, ...after];
+    },
+
+    size(): number {
+      return before.length + 1 + after.length;
+    },
+
+    selected,
+
+    before,
+
+    after
+  };
 }
 
 export default SelectList;
