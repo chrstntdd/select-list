@@ -1,5 +1,7 @@
 # select-list
 
+[![Build Status](https://travis-ci.org/chrstntdd/select-list.svg?branch=master)](https://travis-ci.org/chrstntdd/select-list) [![Coverage Status](https://coveralls.io/repos/github/chrstntdd/select-list/badge.svg?branch=class-rewrite)](https://coveralls.io/github/chrstntdd/select-list?branch=class-rewrite)
+
 > A `SelectList` is a nonempty list that will always have one element selected.
 > 
 > — <cite>Richard Feldman</cite>
@@ -27,15 +29,17 @@ $ npm install select-list
 ```js
 import SelectList from 'select-list';
 
-const s = new SelectList(['a', 'b', 'c', 'd'], 2);
+const s = SelectList(['a', 'b', 'c', 'd'], 2);
 
-s.selected() // 'c'
+s.selected // 'c'
 
+/* Set the next selected item with a function */
+s.select(x => x === 'd').selected; // 'd'
 /* Impossible to move beyond the contents of the SelectList */
-s.next().next().next().selected(); // 'd'
+s.select(x => x === 'unknown').selected; // 'c'
 
 /* Original SelectList remains unchanged */
-s.selected(); // 'c'
+s.selected; // 'c'
 ```
 
 ## Documentation
