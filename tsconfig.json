@@ -6,6 +6,8 @@
     },
     "target": "es5",
     "lib": ["dom", "esnext"]
+    // needed for generating docs only
+    // "module": "commonjs"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "test/**/*.spec.ts"]

@@ -21,10 +21,12 @@
     "pub:check": "npm pack --dry",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "gen-docs": "node_modules/.bin/typedoc src/index.ts --out './docs' --theme minimal ",
-    "release": "npm t && npm run gen-docs && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "release": "npm t && npm run gen-docs && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "bench": "node test/bench.js"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
+    "benchmark": "^2.1.4",
     "coveralls": "^3.0.2",
     "jest": "^23.5.0",
     "microbundle": "^0.6.0",
