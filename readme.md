@@ -8,7 +8,7 @@
 
 ## Highlights
 
-* 📦 Tiny (~300b minified + gzipped ES5)
+* 📦 Tiny (~500b minified + gzipped ES5)
 * 📖 Documented
 * ✅ Fully tested
 * 🚫 Zero dependencies
