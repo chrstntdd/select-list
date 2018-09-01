@@ -13,6 +13,12 @@ class SelectListImpl<a> {
     this._after = after;
   }
 
+  /**
+   * @description
+   * Search through the pieces of the `SelectList` to find the next selected
+   * element. Returns null as a Nothing value to the calling function or the
+   * pieces to create a new `SelectList`
+   */
   private static selectHelp<a>(
     predicateFn: (element: a) => boolean,
     before: a[],
@@ -27,7 +33,7 @@ class SelectListImpl<a> {
       const [head, ...rest] = after;
 
       if (predicateFn(selected)) return [before, selected, after];
-      else if (predicateFn(head)) return [[...before, selected], head, [...after]];
+      else if (predicateFn(head)) return [[...before, selected], head, rest];
       else {
         const mP: MaybePieces<a> = SelectListImpl.selectHelp(predicateFn, [], head, rest);
 
@@ -52,7 +58,7 @@ class SelectListImpl<a> {
    * @description
    * Shift the selected element to the first element which passes
    * the provided predicate function. If no element is found, the
-   * `SelectList` will not be changed.
+   * `SelectList` will not be changed
    */
   public select(predicateFn: (element: a) => boolean): SelectListImpl<a> {
     const mP = SelectListImpl.selectHelp(predicateFn, this._before, this._selected, this._after);
@@ -105,9 +111,9 @@ class SelectListImpl<a> {
 
   /**
    * @description
-   * Return the size of the entire collection
+   * The size of the entire collection
    */
-  public size(): number {
+  public get size(): number {
     return this._before.length + 1 + this._after.length;
   }
 
@@ -121,7 +127,7 @@ class SelectListImpl<a> {
 
   /**
    * @description
-   * The elements currently in the `before` section of the SelectListImpl
+   * The elements currently in the `before` section of the `SelectList`
    */
   public get before() {
     return this._before;
@@ -129,13 +135,17 @@ class SelectListImpl<a> {
 
   /**
    * @description
-   * The elements currently in the `after` section of the SelectListImpl
+   * The elements currently in the `after` section of the `SelectList`
    */
   public get after() {
     return this._after;
   }
 }
 
+/**
+ * @description
+ * Wraps call to create new instance of a `SelectList`
+ */
 export default function SelectList<a>(before: a[], selected: a, after: a[]) {
   return new SelectListImpl(before, selected, after);
 }

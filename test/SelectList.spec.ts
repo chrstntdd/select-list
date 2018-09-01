@@ -36,31 +36,31 @@ describe('SelectList', () => {
     });
 
     describe('select method', () => {
-      it('should no op if the current item is already selected', () => {
-        const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);
-
-        const nextState = sel.select(x => x === 'c');
-
-        expect(nextState.selected).toEqual('c');
-        expect(nextState.before).toEqual(['a', 'b']);
-        expect(nextState.after).toEqual(['d', 'e']);
-      });
-
-      it('should no op if match cant be found', () => {
-        const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);
-
-        const nextState = sel.select(x => x === 'nonexistent');
-
-        expect(nextState.selected).toEqual('c');
-        expect(nextState.before).toEqual(['a', 'b']);
-        expect(nextState.after).toEqual(['d', 'e']);
-      });
-
       describe('selection cases', () => {
         const before = [1, 2, 3, 4];
         const selected = 5;
         const after = [6, 7, 8, 9];
+
         const selectFn = tag => x => x === tag;
+
+        it('should no op if the current item is already selected', () => {
+          const sel = SelectList(before, selected, after);
+          const nextState = sel.select(selectFn(selected));
+
+          expect(nextState.selected).toEqual(selected);
+          expect(nextState.before).toEqual(before);
+          expect(nextState.after).toEqual(after);
+        });
+
+        it('should no op if match cant be found', () => {
+          const sel = SelectList(before, selected, after);
+          const nextState = sel.select(selectFn('nonexistent'));
+
+          expect(nextState.selected).toEqual(selected);
+          expect(nextState.before).toEqual(before);
+          expect(nextState.after).toEqual(after);
+        });
+
         it('when the selected item is the first item in the `before` section', () => {
           const sel = SelectList(before, selected, after);
           const nextState = sel.select(selectFn(1));
@@ -86,7 +86,7 @@ describe('SelectList', () => {
           expect(nextState.after).toEqual([5, 6, 7, 8, 9]);
         });
 
-        it.skip('when the selected item is the first item in the `after` section', () => {
+        it('when the selected item is the first item in the `after` section', () => {
           const sel = SelectList(before, selected, after);
           const nextState = sel.select(selectFn(6));
 
@@ -95,7 +95,7 @@ describe('SelectList', () => {
           expect(nextState.after).toEqual([7, 8, 9]);
         });
 
-        it.skip('when the selected item is somewhere in the middle of the `after` section', () => {
+        it('when the selected item is somewhere in the middle of the `after` section', () => {
           const sel = SelectList(before, selected, after);
           const nextState = sel.select(selectFn(8));
 
@@ -104,23 +104,15 @@ describe('SelectList', () => {
           expect(nextState.after).toEqual([9]);
         });
 
-        it.skip('when the selected item is the last item in the `after` section', () => {
+        it('when the selected item is the last item in the `after` section', () => {
           const sel = SelectList(before, selected, after);
           const nextState = sel.select(selectFn(9));
 
           expect(nextState.selected).toEqual(9);
-          expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7, 9]);
+          expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
           expect(nextState.after).toEqual([]);
         });
       });
-
-      const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);
-
-      const nextState = sel.select(x => x === 'e');
-
-      expect(nextState.selected).toEqual('e');
-      expect(nextState.before).toEqual(['a', 'b', 'c', 'd']);
-      // expect(nextState.after).toEqual([]);
     });
   });
 
@@ -136,7 +128,7 @@ describe('SelectList', () => {
       it('should return length of the complete collection', () => {
         const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);
 
-        expect(sel.size()).toEqual(testArr.length);
+        expect(sel.size).toEqual(testArr.length);
       });
     });
     describe('select getter', () => {
