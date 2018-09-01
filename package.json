@@ -1,6 +1,6 @@
 {
   "name": "select-list",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "dist/select-list.js",
   "module": "dist/stockroom.mjs",
   "umd:main": "dist/select-list.umd.js",
