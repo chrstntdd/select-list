@@ -5,22 +5,33 @@
   "module": "dist/stockroom.mjs",
   "umd:main": "dist/select-list.umd.js",
   "source": "src/index.ts",
-  "typings": "dist/src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "author": "chrstntdd <christiantodd27@icloud.com>",
   "license": "MIT",
   "private": false,
+  "description": "A nonempty list that will always have one element selected.",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "microbundle -o dist/select-list.js",
-    "dev": "microbundle watch",
+    "dev": "microbundle -o dist/select-list.js -w",
     "test": "./node_modules/.bin/jest --coverage",
     "test:auto": "./node_modules/.bin/jest --watch",
-    "release": "npm t && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "pub:check": "npm pack --dry",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "gen-docs": "node_modules/.bin/typedoc src/index.ts --out './docs' --theme minimal ",
+    "release": "npm t && npm run gen-docs && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "bench": "node test/bench.js"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
+    "benchmark": "^2.1.4",
+    "coveralls": "^3.0.2",
     "jest": "^23.5.0",
     "microbundle": "^0.6.0",
     "ts-jest": "^23.1.4",
+    "typedoc": "^0.12.0",
     "typescript": "^3.0.1"
   },
   "jest": {

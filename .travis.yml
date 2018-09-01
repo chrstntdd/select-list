@@ -1,0 +1,12 @@
+language: node_js
+dist: trusty
+cache:
+  yarn: true
+  directories:
+    - node_modules
+install:
+  - yarn
+script:
+  - yarn test
+after_script:
+  - COVERALLS_REPO_TOKEN=$coveralls_repo_token yarn coveralls
