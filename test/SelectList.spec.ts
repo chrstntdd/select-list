@@ -3,6 +3,9 @@ import SelectList from '@/index';
 const testArr = ['a', 'b', 'c', 'd', 'e'];
 
 describe('SelectList', () => {
+  const before = [1, 2, 3, 4];
+  const selected = 5;
+  const after = [6, 7, 8, 9];
   describe('transformations', () => {
     describe('map method', () => {
       it('should apply a function to each element in the SelectList', () => {
@@ -36,82 +39,98 @@ describe('SelectList', () => {
     });
 
     describe('select method', () => {
-      describe('selection cases', () => {
-        const before = [1, 2, 3, 4];
-        const selected = 5;
-        const after = [6, 7, 8, 9];
+      const selectFn = tag => x => x === tag;
 
-        const selectFn = tag => x => x === tag;
+      it('should no op if the current item is already selected', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(selected));
 
-        it('should no op if the current item is already selected', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(selected));
+        expect(nextState.selected).toEqual(selected);
+        expect(nextState.before).toEqual(before);
+        expect(nextState.after).toEqual(after);
+      });
 
-          expect(nextState.selected).toEqual(selected);
-          expect(nextState.before).toEqual(before);
-          expect(nextState.after).toEqual(after);
-        });
+      it('should no op if match cant be found', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn('nonexistent'));
 
-        it('should no op if match cant be found', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn('nonexistent'));
+        expect(nextState.selected).toEqual(selected);
+        expect(nextState.before).toEqual(before);
+        expect(nextState.after).toEqual(after);
+      });
 
-          expect(nextState.selected).toEqual(selected);
-          expect(nextState.before).toEqual(before);
-          expect(nextState.after).toEqual(after);
-        });
+      it('when the selected item is the first item in the `before` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(1));
 
-        it('when the selected item is the first item in the `before` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(1));
+        expect(nextState.selected).toEqual(1);
+        expect(nextState.before).toEqual([]);
+        expect(nextState.after).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
+      });
 
-          expect(nextState.selected).toEqual(1);
-          expect(nextState.before).toEqual([]);
-          expect(nextState.after).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
-        });
-        it('when the selected item is somewhere in the middle of the `before` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(3));
+      it('when the selected item is somewhere in the middle of the `before` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(3));
 
-          expect(nextState.selected).toEqual(3);
-          expect(nextState.before).toEqual([1, 2]);
-          expect(nextState.after).toEqual([4, 5, 6, 7, 8, 9]);
-        });
-        it('when the selected item is the last item in the `before` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(4));
+        expect(nextState.selected).toEqual(3);
+        expect(nextState.before).toEqual([1, 2]);
+        expect(nextState.after).toEqual([4, 5, 6, 7, 8, 9]);
+      });
 
-          expect(nextState.selected).toEqual(4);
-          expect(nextState.before).toEqual([1, 2, 3]);
-          expect(nextState.after).toEqual([5, 6, 7, 8, 9]);
-        });
+      it('when the selected item is the last item in the `before` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(4));
 
-        it('when the selected item is the first item in the `after` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(6));
+        expect(nextState.selected).toEqual(4);
+        expect(nextState.before).toEqual([1, 2, 3]);
+        expect(nextState.after).toEqual([5, 6, 7, 8, 9]);
+      });
 
-          expect(nextState.selected).toEqual(6);
-          expect(nextState.before).toEqual([1, 2, 3, 4, 5]);
-          expect(nextState.after).toEqual([7, 8, 9]);
-        });
+      it('when the selected item is the first item in the `after` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(6));
 
-        it('when the selected item is somewhere in the middle of the `after` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(8));
+        expect(nextState.selected).toEqual(6);
+        expect(nextState.before).toEqual([1, 2, 3, 4, 5]);
+        expect(nextState.after).toEqual([7, 8, 9]);
+      });
 
-          expect(nextState.selected).toEqual(8);
-          expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7]);
-          expect(nextState.after).toEqual([9]);
-        });
+      it('when the selected item is somewhere in the middle of the `after` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(8));
 
-        it('when the selected item is the last item in the `after` section', () => {
-          const sel = SelectList(before, selected, after);
-          const nextState = sel.select(selectFn(9));
+        expect(nextState.selected).toEqual(8);
+        expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7]);
+        expect(nextState.after).toEqual([9]);
+      });
 
-          expect(nextState.selected).toEqual(9);
-          expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
-          expect(nextState.after).toEqual([]);
-        });
+      it('when the selected item is the last item in the `after` section', () => {
+        const sel = SelectList(before, selected, after);
+        const nextState = sel.select(selectFn(9));
+
+        expect(nextState.selected).toEqual(9);
+        expect(nextState.before).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+        expect(nextState.after).toEqual([]);
+      });
+    });
+
+    describe('prepend method', () => {
+      it('should add elements to beginning of the collection', () => {
+        const sel = SelectList(before, selected, after);
+        const originalBefore = sel.before;
+        const nextState = sel.prepend([0, 'a', { something: 'else' }]);
+
+        expect(nextState.before).toEqual([0, 'a', { something: 'else' }, ...originalBefore]);
+      });
+    });
+
+    describe('append method', () => {
+      it('should add elements to end of the collection', () => {
+        const sel = SelectList(before, selected, after);
+        const originalAfter = sel.after;
+        const nextState = sel.append([0, 'a', { something: 'else' }]);
+
+        expect(nextState.after).toEqual([...originalAfter, 0, 'a', { something: 'else' }]);
       });
     });
   });
@@ -124,6 +143,7 @@ describe('SelectList', () => {
         expect(sel.toArray()).toEqual(testArr);
       });
     });
+
     describe('size getter', () => {
       it('should return length of the complete collection', () => {
         const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);
@@ -131,6 +151,7 @@ describe('SelectList', () => {
         expect(sel.size).toEqual(testArr.length);
       });
     });
+
     describe('select getter', () => {
       it('should return the currently selected element in the SelectList', () => {
         const sel = SelectList(['a', 'b'], 'c', ['d', 'e']);

@@ -103,6 +103,22 @@ class SelectListImpl<a> {
 
   /**
    * @description
+   * Add elements to the beginning of the `SelectList`
+   */
+  public prepend(arr: a[]) {
+    return new SelectListImpl([...arr, ...this._before], this._selected, this._after);
+  }
+
+  /**
+   * @description
+   * Add elements to the end of the `SelectList`
+   */
+  public append(arr: a[]) {
+    return new SelectListImpl(this._before, this._selected, [...this._after, ...arr]);
+  }
+
+  /**
+   * @description
    * Returns the entire collection as a single array
    */
   public toArray(): a[] {
