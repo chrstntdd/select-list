@@ -1,4 +1,5 @@
 const Benchmark = require('benchmark');
+
 const Class = require('./class');
 const Fn = require('./fn');
 
@@ -49,19 +50,19 @@ suite
     sel.map(transformationFn);
   })
   .add('class map 10 elements', function() {
-    const sel = new Class(ten.before, 1, ten.after);
+    const sel = Class(ten.before, 1, ten.after);
     sel.map(transformationFn);
   })
   .add('class map 100 elements', function() {
-    const sel = new Class(hunnid.before, 1, hunnid.after);
+    const sel = Class(hunnid.before, 1, hunnid.after);
     sel.map(transformationFn);
   })
   .add('class map 10000 elements', function() {
-    const sel = new Class(tenK.before, 1, tenK.after);
+    const sel = Class(tenK.before, 1, tenK.after);
     sel.map(transformationFn);
   })
   .add('class map 1000000 elements', function() {
-    const sel = new Class(oneMil.before, 1, oneMil.after);
+    const sel = Class(oneMil.before, 1, oneMil.after);
     sel.map(transformationFn);
   })
   .on('cycle', function(event) {

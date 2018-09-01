@@ -1,65 +1,76 @@
-var t = (function() {
-  function t(t, e, n) {
-    (this._before = t), (this._selected = e), (this._after = n);
+var e = (function() {
+  function e(e, t, n) {
+    (this._before = e), (this._selected = t), (this._after = n);
   }
   return (
-    (t.selectHelp = function(e, n, r, o) {
+    (e.selectHelp = function(t, n, r, o) {
       if (!n.length && !o.length) return null;
       if (!n.length && o.length) {
         var i = o[0],
-          s = o.slice(1);
-        return e(r)
+          l = o.slice(1);
+        return t(r)
           ? [n, r, o]
-          : e(i)
+          : t(i)
             ? [n.concat([r]), i, o.slice()]
-            : null === (l = t.selectHelp(e, [], i, s))
+            : null === (c = e.selectHelp(t, [], i, l))
               ? null
-              : [[r].concat(l[0]), l[1], l[2]];
+              : [[r].concat(c[0]), c[1], c[2]];
       }
-      var l,
-        c = n[0],
+      var c,
+        s = n[0],
         u = n.slice(1);
-      return e(c)
-        ? [[], c, u.concat([r], o)]
-        : null === (l = t.selectHelp(e, u, r, o))
+      return t(s)
+        ? [[], s, u.concat([r], o)]
+        : null === (c = e.selectHelp(t, u, r, o))
           ? null
-          : [[c].concat(l[0]), l[1], l[2]];
+          : [[s].concat(c[0]), c[1], c[2]];
     }),
-    (t.prototype.fromLists = function(e, n, r) {
-      return new t(e, n, r);
+    (e.prototype.select = function(t) {
+      var n = e.selectHelp(t, this._before, this._selected, this._after);
+      return null === n ? this : new e(n[0], n[1], n[2]);
     }),
-    (t.prototype.select = function(e) {
-      var n = t.selectHelp(e, this._before, this._selected, this._after);
-      return null === n ? this : new t(n[0], n[1], n[2]);
+    (e.mapWithPosition = function(e, t, n) {
+      for (var r = 0; r < e.length; r++) e[r] = t(e[r], r, n);
+      return e;
     }),
-    (t.mapWithPosition = function(t, e, n) {
-      for (var r = [], o = 0; o < t.length; o++) r.push(e(t[o], o, n));
-      return r;
-    }),
-    (t.prototype.map = function(e) {
-      return new t(
-        t.mapWithPosition(this._before, e, 'BEFORE'),
-        e(this._selected, this._before.length, 'SELECTED'),
-        t.mapWithPosition(this._after, e, 'AFTER')
+    (e.prototype.map = function(t) {
+      return new e(
+        e.mapWithPosition(this._before, t, 'BEFORE'),
+        t(this._selected, this._before.length, 'SELECTED'),
+        e.mapWithPosition(this._after, t, 'AFTER')
       );
     }),
-    (t.prototype.toArray = function() {
+    (e.prototype.toArray = function() {
       return this._before.concat([this._selected], this._after);
     }),
-    (t.prototype.size = function() {
+    (e.prototype.size = function() {
       return this._before.length + 1 + this._after.length;
     }),
-    (t.prototype.selected = function() {
-      return this._selected;
+    Object.defineProperty(e.prototype, 'selected', {
+      get: function() {
+        return this._selected;
+      },
+      enumerable: !0,
+      configurable: !0
     }),
-    (t.prototype.before = function() {
-      return this._before;
+    Object.defineProperty(e.prototype, 'before', {
+      get: function() {
+        return this._before;
+      },
+      enumerable: !0,
+      configurable: !0
     }),
-    (t.prototype.after = function() {
-      return this._after;
+    Object.defineProperty(e.prototype, 'after', {
+      get: function() {
+        return this._after;
+      },
+      enumerable: !0,
+      configurable: !0
     }),
-    t
+    e
   );
 })();
-module.exports = t;
+module.exports = function(t, n, r) {
+  return new e(t, n, r);
+};
 //# sourceMappingURL=select-list.js.map

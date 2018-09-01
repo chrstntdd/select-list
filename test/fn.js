@@ -1,6 +1,6 @@
 function n(n, t, e) {
-  for (var r = [], l = 0; l < n.length; l++) r.push(t(n[l], l, e));
-  return r;
+  for (var r = 0; r < n.length; r++) n[r] = t(n[r], r, e);
+  return n;
 }
 module.exports = function t(e, r, l) {
   return {
