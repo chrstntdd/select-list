@@ -1,17 +1,28 @@
 {
   "name": "select-list",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "dist/select-list.js",
-  "module": "dist/stockroom.mjs",
+  "module": "dist/select-list.mjs",
   "umd:main": "dist/select-list.umd.js",
   "source": "src/index.ts",
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "chrstntdd <christiantodd27@icloud.com>",
   "license": "MIT",
   "private": false,
   "description": "A nonempty list that will always have one element selected.",
   "files": [
     "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrstntdd/select-list.git"
+  },
+  "keywords": [
+    "immutable",
+    "list",
+    "tiny",
+    "typescript",
+    "zipper"
   ],
   "scripts": {
     "build": "microbundle -o dist/select-list.js",
