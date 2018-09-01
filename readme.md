@@ -29,17 +29,18 @@ $ npm install select-list
 ```js
 import SelectList from 'select-list';
 
-const s = SelectList(['a', 'b', 'c', 'd'], 2);
+const s = SelectList([1, 2, 3, 4], 5, [6, 7, 8, 9, 10]);
 
-s.selected // 'c'
+s.selected // -> 5
 
 /* Set the next selected item with a function */
-s.select(x => x === 'd').selected; // 'd'
+s.select(x => x === 7).selected; // -> 7
+
 /* Impossible to move beyond the contents of the SelectList */
-s.select(x => x === 'unknown').selected; // 'c'
+s.select(x => x > 42).selected; // -> 7
 
 /* Original SelectList remains unchanged */
-s.selected; // 'c'
+s.selected; // -> 5
 ```
 
 ## Documentation
