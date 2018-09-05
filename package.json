@@ -1,6 +1,6 @@
 {
   "name": "select-list",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "main": "dist/select-list.js",
   "module": "dist/select-list.mjs",
   "umd:main": "dist/select-list.umd.js",

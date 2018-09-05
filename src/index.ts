@@ -2,15 +2,46 @@ type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
 
 type MaybePieces<a> = [a[], a, a[]] | null;
 
+/**
+ * @description
+ * A nonempty list that will always have one element selected
+ *
+ * **NOTE**
+ * For size and performance reasons, the public properties are not
+ * truly immutable, meaning they _can_ be reassigned, but doing so
+ * will result in unexpected behavior due to mutations made to
+ * internal state. Please treat them as readonly — as intended
+ */
 class SelectListImpl<a> {
-  private _before: a[];
-  private _selected: a;
-  private _after: a[];
+  /**
+   * @description
+   * The currently selected element
+   */
+  public readonly selected: a;
+
+  /**
+   * @description
+   * The elements currently in the `before` section of the `SelectList`
+   */
+  public readonly before: a[];
+
+  /**
+   * @description
+   * The elements currently in the `after` section of the `SelectList`
+   */
+  public readonly after: a[];
+
+  /**
+   * @description
+   * The size of the entire collection
+   */
+  public readonly size: number;
 
   constructor(before: a[], selected: a, after: a[]) {
-    this._before = before;
-    this._selected = selected;
-    this._after = after;
+    this.before = before;
+    this.selected = selected;
+    this.after = after;
+    this.size = before.length + 1 + after.length;
   }
 
   /**
@@ -61,7 +92,7 @@ class SelectListImpl<a> {
    * `SelectList` will not be changed
    */
   public select(predicateFn: (element: a) => boolean): SelectListImpl<a> {
-    const mP = SelectListImpl.selectHelp(predicateFn, this._before, this._selected, this._after);
+    const mP = SelectListImpl.selectHelp(predicateFn, this.before, this.selected, this.after);
 
     if (mP === null) return this;
 
@@ -95,9 +126,9 @@ class SelectListImpl<a> {
    */
   public map<b>(fn: (element: a, index?: number, position?: Position) => b): SelectListImpl<b> {
     return new SelectListImpl(
-      SelectListImpl.mapWithPosition(this._before, fn, 'BEFORE'),
-      fn(this._selected, this._before.length, 'SELECTED'),
-      SelectListImpl.mapWithPosition(this._after, fn, 'AFTER')
+      SelectListImpl.mapWithPosition(this.before, fn, 'BEFORE'),
+      fn(this.selected, this.before.length, 'SELECTED'),
+      SelectListImpl.mapWithPosition(this.after, fn, 'AFTER')
     );
   }
 
@@ -106,7 +137,7 @@ class SelectListImpl<a> {
    * Add elements to the beginning of the `SelectList`
    */
   public prepend(arr: a[]) {
-    return new SelectListImpl([...arr, ...this._before], this._selected, this._after);
+    return new SelectListImpl([...arr, ...this.before], this.selected, this.after);
   }
 
   /**
@@ -114,7 +145,7 @@ class SelectListImpl<a> {
    * Add elements to the end of the `SelectList`
    */
   public append(arr: a[]) {
-    return new SelectListImpl(this._before, this._selected, [...this._after, ...arr]);
+    return new SelectListImpl(this.before, this.selected, [...this.after, ...arr]);
   }
 
   /**
@@ -122,39 +153,7 @@ class SelectListImpl<a> {
    * Returns the entire collection as a single array
    */
   public toArray(): a[] {
-    return [...this._before, this._selected, ...this._after];
-  }
-
-  /**
-   * @description
-   * The size of the entire collection
-   */
-  public get size(): number {
-    return this._before.length + 1 + this._after.length;
-  }
-
-  /**
-   * @description
-   * The currently selected element
-   */
-  public get selected() {
-    return this._selected;
-  }
-
-  /**
-   * @description
-   * The elements currently in the `before` section of the `SelectList`
-   */
-  public get before() {
-    return this._before;
-  }
-
-  /**
-   * @description
-   * The elements currently in the `after` section of the `SelectList`
-   */
-  public get after() {
-    return this._after;
+    return [...this.before, this.selected, ...this.after];
   }
 }
 
