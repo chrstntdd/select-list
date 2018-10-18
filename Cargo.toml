@@ -1,0 +1,6 @@
+[package]
+name = "rustimpl"
+version = "0.1.0"
+authors = ["chrstntdd <christiantodd27@icloud.com>"]
+
+[dependencies]
