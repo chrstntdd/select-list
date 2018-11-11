@@ -1,6 +1,70 @@
 type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
 
-type MaybePieces<a> = [a[], a, a[]] | null;
+type MaybePieces<a> = [a[], a, a[]] | 0;
+
+/**
+ * @private
+ *
+ * @description
+ * Search through the pieces of the `SelectList` to find the next selected
+ * element. Returns 0 as a Nothing value to the calling function or the
+ * pieces to create a new `SelectList`
+ */
+let selectHelp = <A>(
+  predicateFn: (element: A) => boolean,
+  before: A[],
+  selected: A,
+  after: A[]
+): MaybePieces<A> => {
+  // ( [], [] ) ->
+  if (!before.length && !after.length) return 0;
+
+  // ( [], head :: rest ) ->
+  if (!before.length && after.length) {
+    const [head, ...rest] = after;
+
+    if (predicateFn(selected)) return [before, selected, after];
+    else if (predicateFn(head)) return [[...before, selected], head, rest];
+    else {
+      const mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest);
+
+      if (!mP) return 0;
+      return [[selected, ...mP[0]], mP[1], mP[2]];
+    }
+  }
+
+  // ( head :: rest, _ ) ->
+  const [head, ...rest] = before;
+
+  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
+  else {
+    const mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after);
+
+    if (!mP) return 0;
+    return [[head, ...mP[0]], mP[1], mP[2]];
+  }
+};
+
+/**
+ * @private
+ *
+ * @description
+ * Apply a function to each element in an array by mutating in place
+ * The API is somewhat in line with the native `Array.map()`, but
+ * instead receives its `Position` type as the third argument
+ */
+let mapWithPosition = <A, B>(
+  array: A[],
+  callback: (element: A, index?: number, position?: Position) => B,
+  position: Position
+): B[] => {
+  for (let i = 0; i < array.length; i++) {
+    // @ts-ignore
+    array[i] = callback(array[i], i, position);
+  }
+  // @ts-ignore
+  return array;
+};
 
 /**
  * @description
@@ -46,76 +110,16 @@ class SelectListImpl<a> {
 
   /**
    * @description
-   * Search through the pieces of the `SelectList` to find the next selected
-   * element. Returns null as a Nothing value to the calling function or the
-   * pieces to create a new `SelectList`
-   */
-  private static selectHelp<a>(
-    predicateFn: (element: a) => boolean,
-    before: a[],
-    selected: a,
-    after: a[]
-  ): MaybePieces<a> {
-    // ( [], [] ) ->
-    if (!before.length && !after.length) return null;
-
-    // ( [], head :: rest ) ->
-    if (!before.length && after.length) {
-      const [head, ...rest] = after;
-
-      if (predicateFn(selected)) return [before, selected, after];
-      else if (predicateFn(head)) return [[...before, selected], head, rest];
-      else {
-        const mP: MaybePieces<a> = SelectListImpl.selectHelp(predicateFn, [], head, rest);
-
-        if (mP === null) return null;
-        return [[selected, ...mP[0]], mP[1], mP[2]];
-      }
-    }
-
-    // ( head :: rest, _ ) ->
-    const [head, ...rest] = before;
-
-    if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
-    else {
-      const mP: MaybePieces<a> = SelectListImpl.selectHelp(predicateFn, rest, selected, after);
-
-      if (mP === null) return null;
-      return [[head, ...mP[0]], mP[1], mP[2]];
-    }
-  }
-
-  /**
-   * @description
    * Shift the selected element to the first element which passes
    * the provided predicate function. If no element is found, the
    * `SelectList` will not be changed
    */
   public select(predicateFn: (element: a) => boolean): SelectListImpl<a> {
-    const mP = SelectListImpl.selectHelp(predicateFn, this.before, this.selected, this.after);
+    const mP = selectHelp(predicateFn, this.before, this.selected, this.after);
 
-    if (mP === null) return this;
+    if (!mP) return this;
 
-    return new SelectListImpl(mP[0], mP[1], mP[2]);
-  }
-
-  /**
-   * @description
-   * Apply a function to each element in an array by mutating in place
-   * The API is somewhat in line with the native `Array.map()`, but
-   * instead receives its `Position` type as the third argument
-   */
-  private static mapWithPosition<a, b>(
-    array: a[],
-    callback: (element: a, index?: number, position?: Position) => b,
-    position: Position
-  ): b[] {
-    for (let i = 0; i < array.length; i++) {
-      // @ts-ignore
-      array[i] = callback(array[i], i, position);
-    }
-    // @ts-ignore
-    return array;
+    return SelectList(mP[0], mP[1], mP[2]);
   }
 
   /**
@@ -125,10 +129,10 @@ class SelectListImpl<a> {
    * location in the `SelectList`
    */
   public map<b>(fn: (element: a, index?: number, position?: Position) => b): SelectListImpl<b> {
-    return new SelectListImpl(
-      SelectListImpl.mapWithPosition(this.before, fn, 'BEFORE'),
+    return SelectList(
+      mapWithPosition(this.before, fn, 'BEFORE'),
       fn(this.selected, this.before.length, 'SELECTED'),
-      SelectListImpl.mapWithPosition(this.after, fn, 'AFTER')
+      mapWithPosition(this.after, fn, 'AFTER')
     );
   }
 
@@ -137,7 +141,7 @@ class SelectListImpl<a> {
    * Add elements to the beginning of the `SelectList`
    */
   public prepend(arr: a[]) {
-    return new SelectListImpl([...arr, ...this.before], this.selected, this.after);
+    return SelectList([...arr, ...this.before], this.selected, this.after);
   }
 
   /**
@@ -145,7 +149,7 @@ class SelectListImpl<a> {
    * Add elements to the end of the `SelectList`
    */
   public append(arr: a[]) {
-    return new SelectListImpl(this.before, this.selected, [...this.after, ...arr]);
+    return SelectList(this.before, this.selected, [...this.after, ...arr]);
   }
 
   /**
