@@ -1,6 +1,7 @@
 # select-list
 
 [![Build Status](https://travis-ci.org/chrstntdd/select-list.svg?branch=master)](https://travis-ci.org/chrstntdd/select-list) [![Coverage Status](https://coveralls.io/repos/github/chrstntdd/select-list/badge.svg?branch=class-rewrite)](https://coveralls.io/github/chrstntdd/select-list?branch=class-rewrite)
+[![Size](https://badgen.net/bundlephobia/minzip/select-list)](https://bundlephobia.com/result?p=select-list)
 
 ## Highlights
 
@@ -23,23 +24,24 @@ $ npm install select-list
 ## Usage
 
 ```js
-import SelectList from 'select-list';
+import SelectList from 'select-list'
 
-const s = SelectList([1, 2, 3, 4], 5, [6, 7, 8, 9, 10]);
+const s = SelectList([1, 2, 3, 4], 5, [6, 7, 8, 9, 10])
 
 s.selected // -> 5
+s.size // -> 10
 
 /* Set the next selected item with a function */
-const { before, selected, after } = s.select(x => x === 7);
-before; // -> [1, 2, 3, 4, 5, 6]
-selected; // -> 7
-after; // -> [8, 9]
+const { before, selected, after } = s.select(x => x === 7)
+before // -> [1, 2, 3, 4, 5, 6]
+selected // -> 7
+after // -> [8, 9]
 
 /* Impossible to move beyond the contents of the SelectList */
-s.select(x => x > 42).selected; // -> 7
+s.select(x => x > 42).selected // -> 7
 
 /* Original SelectList remains unchanged */
-s.selected; // -> 5
+s.selected // -> 5
 ```
 
 ## Documentation

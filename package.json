@@ -1,13 +1,15 @@
 {
   "name": "select-list",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "main": "dist/select-list.js",
+  "module": "dist/select-list.mjs",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "author": "chrstntdd <christiantodd27@icloud.com>",
   "license": "MIT",
   "private": false,
   "description": "A nonempty list that will always have one element selected.",
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -23,13 +25,12 @@
     "zipper"
   ],
   "scripts": {
-    "build": "microbundle -o dist/select-list.js -f cjs",
-    "dev": "microbundle -o dist/select-list.js -w",
+    "build": "rm -rf dist && microbundle -o dist/select-list.js -f es,cjs",
     "test": "./node_modules/.bin/jest --coverage",
     "test:auto": "./node_modules/.bin/jest --watch",
     "pub:check": "npm pack --dry",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "gen-docs": "rm -rf docs && node_modules/.bin/typedoc src/index.ts --out docs --theme minimal ",
+    "gen-docs": "rm -rf docs && node_modules/.bin/typedoc src/index.ts --out docs --theme minimal --module commonjs",
     "release": "npm t && rm -rf dist && npm run build && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
     "bench": "node test/bench.js"
   },
@@ -38,10 +39,10 @@
     "benchmark": "^2.1.4",
     "coveralls": "^3.0.2",
     "jest": "^23.6.0",
-    "microbundle": "^0.6.0",
+    "microbundle": "^0.7.0",
     "ts-jest": "23.1.4",
     "typedoc": "^0.13.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.6"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -50,7 +51,7 @@
       "node"
     ],
     "collectCoverageFrom": [
-      "src/**/*.ts"
+      "src/index.ts"
     ],
     "coverageReporters": [
       "lcov"

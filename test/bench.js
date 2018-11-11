@@ -1,5 +1,6 @@
 const Benchmark = require('benchmark');
 
+const Pure = require('./pure');
 const Class = require('./class');
 const Fn = require('./fn');
 
@@ -48,6 +49,22 @@ suite
   .add('fn map 1000000 elements', function() {
     const sel = Fn(oneMil.before, 1, oneMil.after);
     sel.map(transformationFn);
+  })
+  .add('pure fn map 10 elements', function() {
+    const sel = [ten.before, 1, ten.after];
+    Pure.map(transformationFn, sel);
+  })
+  .add('pure fn map 100 elements', function() {
+    const sel = [hunnid.before, 1, hunnid.after];
+    Pure.map(transformationFn, sel);
+  })
+  .add('pure fn map 10000 elements', function() {
+    const sel = [tenK.before, 1, tenK.after];
+    Pure.map(transformationFn, sel);
+  })
+  .add('pure fn map 1000000 elements', function() {
+    const sel = [oneMil.before, 1, oneMil.after];
+    Pure.map(transformationFn, sel);
   })
   .add('class map 10 elements', function() {
     const sel = Class(ten.before, 1, ten.after);

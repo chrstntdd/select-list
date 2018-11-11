@@ -1,76 +1,62 @@
-var e = (function() {
-  function e(e, t, n) {
-    (this._before = e), (this._selected = t), (this._after = n);
-  }
-  return (
-    (e.selectHelp = function(t, n, r, o) {
-      if (!n.length && !o.length) return null;
-      if (!n.length && o.length) {
-        var i = o[0],
-          l = o.slice(1);
-        return t(r)
-          ? [n, r, o]
-          : t(i)
-            ? [n.concat([r]), i, o.slice()]
-            : null === (c = e.selectHelp(t, [], i, l))
-              ? null
-              : [[r].concat(c[0]), c[1], c[2]];
-      }
-      var c,
-        s = n[0],
-        u = n.slice(1);
-      return t(s)
-        ? [[], s, u.concat([r], o)]
-        : null === (c = e.selectHelp(t, u, r, o))
-          ? null
-          : [[s].concat(c[0]), c[1], c[2]];
-    }),
-    (e.prototype.select = function(t) {
-      var n = e.selectHelp(t, this._before, this._selected, this._after);
-      return null === n ? this : new e(n[0], n[1], n[2]);
-    }),
-    (e.mapWithPosition = function(e, t, n) {
-      for (var r = 0; r < e.length; r++) e[r] = t(e[r], r, n);
-      return e;
-    }),
-    (e.prototype.map = function(t) {
-      return new e(
-        e.mapWithPosition(this._before, t, 'BEFORE'),
-        t(this._selected, this._before.length, 'SELECTED'),
-        e.mapWithPosition(this._after, t, 'AFTER')
-      );
-    }),
-    (e.prototype.toArray = function() {
-      return this._before.concat([this._selected], this._after);
-    }),
-    (e.prototype.size = function() {
-      return this._before.length + 1 + this._after.length;
-    }),
-    Object.defineProperty(e.prototype, 'selected', {
-      get: function() {
-        return this._selected;
-      },
-      enumerable: !0,
-      configurable: !0
-    }),
-    Object.defineProperty(e.prototype, 'before', {
-      get: function() {
-        return this._before;
-      },
-      enumerable: !0,
-      configurable: !0
-    }),
-    Object.defineProperty(e.prototype, 'after', {
-      get: function() {
-        return this._after;
-      },
-      enumerable: !0,
-      configurable: !0
-    }),
-    e
-  );
-})();
-module.exports = function(t, n, r) {
-  return new e(t, n, r);
-};
+var t = function(e, r, n, o) {
+    if (!r.length && !o.length) return 0;
+    if (!r.length && o.length) {
+      var i = o[0],
+        c = o.slice(1);
+      return e(n)
+        ? [r, n, o]
+        : e(i)
+        ? [r.concat([n]), i, c]
+        : (s = t(e, [], i, c))
+        ? [[n].concat(s[0]), s[1], s[2]]
+        : 0;
+    }
+    var s,
+      h = r[0],
+      f = r.slice(1);
+    return e(h)
+      ? [[], h, f.concat([n], o)]
+      : (s = t(e, f, n, o))
+      ? [[h].concat(s[0]), s[1], s[2]]
+      : 0;
+  },
+  e = function(t, e, r) {
+    for (var n = 0; n < t.length; n++) t[n] = e(t[n], n, r);
+    return t;
+  },
+  r = (function() {
+    function r(t, e, r) {
+      (this.before = t),
+        (this.selected = e),
+        (this.after = r),
+        (this.size = t.length + 1 + r.length);
+    }
+    return (
+      (r.prototype.select = function(e) {
+        var r = t(e, this.before, this.selected, this.after);
+        return r ? n(r[0], r[1], r[2]) : this;
+      }),
+      (r.prototype.map = function(t) {
+        return n(
+          e(this.before, t, 'BEFORE'),
+          t(this.selected, this.before.length, 'SELECTED'),
+          e(this.after, t, 'AFTER')
+        );
+      }),
+      (r.prototype.prepend = function(t) {
+        return n(t.concat(this.before), this.selected, this.after);
+      }),
+      (r.prototype.append = function(t) {
+        return n(this.before, this.selected, this.after.concat(t));
+      }),
+      (r.prototype.toArray = function() {
+        return this.before.concat([this.selected], this.after);
+      }),
+      r
+    );
+  })();
+function n(t, e, n) {
+  return new r(t, e, n);
+}
+module.exports = n;
 //# sourceMappingURL=select-list.js.map
