@@ -1,12 +1,12 @@
-type SelectListPure<A> = [A[], A, A[]];
-type MaybePieces<a> = [a[], a, a[]] | null;
-type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
+export type SelectList<A> = [A[], A, A[]];
+export type MaybePieces<A> = SelectList<A> | 0;
+export type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
 
 /**
  * @private
  * @description
  * Search through the pieces of the `SelectList` to find the next selected
- * element. Returns null as a Nothing value to the calling function or the
+ * element. Returns 0 as a Nothing value to the calling function or the
  * pieces to create a new `SelectList`
  */
 let selectHelp = <A>(
@@ -16,30 +16,30 @@ let selectHelp = <A>(
   after: A[]
 ): MaybePieces<A> => {
   // ( [], [] ) ->
-  if (!before.length && !after.length) return null;
+  if (!before.length && !after.length) return 0;
 
   // ( [], head :: rest ) ->
   if (!before.length && after.length) {
-    const [head, ...rest] = after;
+    let [head, ...rest] = after;
 
     if (predicateFn(selected)) return [before, selected, after];
     else if (predicateFn(head)) return [[...before, selected], head, rest];
     else {
-      const mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest);
+      let mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest);
 
-      if (mP === null) return null;
+      if (!mP) return 0;
       return [[selected, ...mP[0]], mP[1], mP[2]];
     }
   }
 
   // ( head :: rest, _ ) ->
-  const [head, ...rest] = before;
+  let [head, ...rest] = before;
 
   if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
   else {
-    const mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after);
+    let mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after);
 
-    if (mP === null) return null;
+    if (!mP) return 0;
     return [[head, ...mP[0]], mP[1], mP[2]];
   }
 };
@@ -66,35 +66,14 @@ let mapWithPosition = <A, B>(
 
 /**
  * @description
- * The elements currently in the `before` section of the `SelectList`
- */
-let before = <A>(sel: SelectListPure<A>): A[] => sel[0];
-
-/**
- * @description
- * The currently selected element
- */
-let selected = <A>(sel: SelectListPure<A>): A => sel[1];
-
-/**
- * @description
- * The elements currently in the `after` section of the `SelectList`
- */
-let after = <A>(sel: SelectListPure<A>): A[] => sel[2];
-
-/**
- * @description
  * Shift the selected element to the first element which passes
  * the provided predicate function. If no element is found, the
  * `SelectList` will not be changed
  */
-let select = <A>(
-  predicateFn: (element: A) => boolean,
-  sel: SelectListPure<A>
-): SelectListPure<A> => {
-  const mP: MaybePieces<A> = selectHelp(predicateFn, sel[0], sel[1], sel[2]);
+let select = <A>(predicateFn: (element: A) => boolean, sel: SelectList<A>): SelectList<A> => {
+  let mP: MaybePieces<A> = selectHelp(predicateFn, sel[0], sel[1], sel[2]);
 
-  if (mP === null) return;
+  if (!mP) return sel;
 
   return [mP[0], mP[1], mP[2]];
 };
@@ -107,8 +86,8 @@ let select = <A>(
  */
 let map = <A, B>(
   fn: (element: A, index?: number, position?: Position) => B,
-  sel: SelectListPure<A>
-): SelectListPure<B> => [
+  sel: SelectList<A>
+): SelectList<B> => [
   mapWithPosition(sel[0], fn, 'BEFORE'),
   fn(sel[1], sel[0].length, 'SELECTED'),
   mapWithPosition(sel[2], fn, 'AFTER')
@@ -118,7 +97,7 @@ let map = <A, B>(
  * @description
  * Add elements to the beginning of the `SelectList`
  */
-let prepend = <A>(arr: A[], sel: SelectListPure<A>): SelectListPure<A> => [
+let prepend = <A>(arr: A[], sel: SelectList<A>): SelectList<A> => [
   [...arr, ...sel[0]],
   sel[1],
   sel[2]
@@ -128,7 +107,7 @@ let prepend = <A>(arr: A[], sel: SelectListPure<A>): SelectListPure<A> => [
  * @description
  * Add elements to the end of the `SelectList`
  */
-let append = <A>(arr: A[], sel: SelectListPure<A>): SelectListPure<A> => [
+let append = <A>(arr: A[], sel: SelectList<A>): SelectList<A> => [
   sel[0],
   sel[1],
   [...sel[2], ...arr]
@@ -138,6 +117,6 @@ let append = <A>(arr: A[], sel: SelectListPure<A>): SelectListPure<A> => [
  * @description
  * Returns the entire collection as a single array
  */
-let toArray = <A>(sel: SelectListPure<A>): A[] => [...sel[0], sel[1], ...sel[2]];
+let toArray = <A>(sel: SelectList<A>): A[] => [...sel[0], sel[1], ...sel[2]];
 
-export { map, select, before, after, selected, prepend, append, toArray };
+export { map, select, prepend, append, toArray };
