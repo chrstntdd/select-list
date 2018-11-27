@@ -1,6 +1,6 @@
 # select-list
 
-[![Build Status](https://travis-ci.org/chrstntdd/select-list.svg?branch=master)](https://travis-ci.org/chrstntdd/select-list) [![Coverage Status](https://coveralls.io/repos/github/chrstntdd/select-list/badge.svg)](https://coveralls.io/github/chrstntdd/select-list?branch=class-rewrite)
+[![Build Status](https://travis-ci.org/chrstntdd/select-list.svg?branch=master)](https://travis-ci.org/chrstntdd/select-list) [![Coverage Status](https://coveralls.io/repos/github/chrstntdd/select-list/badge.svg)](https://coveralls.io/github/chrstntdd/select-list)
 [![Size](https://badgen.net/bundlephobia/minzip/select-list)](https://bundlephobia.com/result?p=select-list)
 
 ## Highlights
