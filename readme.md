@@ -5,11 +5,11 @@
 
 ## Highlights
 
-* 📦 Tiny (~500b minified + gzipped ES5)
-* 📖 Documented
-* ✅ Fully tested
-* 🚫 Zero dependencies
-* 😎 Immutable[*](#considerations)
+- 📦 Tiny (~500b minified + gzipped ES5)
+- 📖 Documented
+- ✅ Fully tested
+- 🚫 Zero dependencies
+- 😎 Immutable[\*](#considerations)
 
 ## Inspiration / Credits
 
@@ -24,7 +24,7 @@ $ npm install select-list
 ## Usage
 
 ```js
-import SelectList from 'select-list'
+import SelectList from "select-list"
 
 const s = SelectList([1, 2, 3, 4], 5, [6, 7, 8, 9, 10])
 

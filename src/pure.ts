@@ -1,6 +1,6 @@
-export type SelectList<A> = [A[], A, A[]];
-export type MaybePieces<A> = SelectList<A> | 0;
-export type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
+export type SelectList<A> = [A[], A, A[]]
+export type MaybePieces<A> = SelectList<A> | 0
+export type Position = 'BEFORE' | 'SELECTED' | 'AFTER'
 
 /**
  * @private
@@ -16,33 +16,33 @@ let selectHelp = <A>(
   after: A[]
 ): MaybePieces<A> => {
   // ( [], [] ) ->
-  if (!before.length && !after.length) return 0;
+  if (!before.length && !after.length) return 0
 
   // ( [], head :: rest ) ->
   if (!before.length && after.length) {
-    let [head, ...rest] = after;
+    let [head, ...rest] = after
 
-    if (predicateFn(selected)) return [before, selected, after];
-    else if (predicateFn(head)) return [[...before, selected], head, rest];
+    if (predicateFn(selected)) return [before, selected, after]
+    else if (predicateFn(head)) return [[...before, selected], head, rest]
     else {
-      let mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest);
+      let mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest)
 
-      if (!mP) return 0;
-      return [[selected, ...mP[0]], mP[1], mP[2]];
+      if (!mP) return 0
+      return [[selected, ...mP[0]], mP[1], mP[2]]
     }
   }
 
   // ( head :: rest, _ ) ->
-  let [head, ...rest] = before;
+  let [head, ...rest] = before
 
-  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
+  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]]
   else {
-    let mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after);
+    let mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after)
 
-    if (!mP) return 0;
-    return [[head, ...mP[0]], mP[1], mP[2]];
+    if (!mP) return 0
+    return [[head, ...mP[0]], mP[1], mP[2]]
   }
-};
+}
 
 /**
  * @private
@@ -58,11 +58,11 @@ let mapWithPosition = <A, B>(
 ): B[] => {
   for (let i = 0; i < array.length; i++) {
     // @ts-ignore
-    array[i] = callback(array[i], i, position);
+    array[i] = callback(array[i], i, position)
   }
   // @ts-ignore
-  return array;
-};
+  return array
+}
 
 /**
  * @description
@@ -71,12 +71,12 @@ let mapWithPosition = <A, B>(
  * `SelectList` will not be changed
  */
 let select = <A>(predicateFn: (element: A) => boolean, sel: SelectList<A>): SelectList<A> => {
-  let mP: MaybePieces<A> = selectHelp(predicateFn, sel[0], sel[1], sel[2]);
+  let mP: MaybePieces<A> = selectHelp(predicateFn, sel[0], sel[1], sel[2])
 
-  if (!mP) return sel;
+  if (!mP) return sel
 
-  return [mP[0], mP[1], mP[2]];
-};
+  return [mP[0], mP[1], mP[2]]
+}
 
 /**
  * @description
@@ -91,7 +91,7 @@ let map = <A, B>(
   mapWithPosition(sel[0], fn, 'BEFORE'),
   fn(sel[1], sel[0].length, 'SELECTED'),
   mapWithPosition(sel[2], fn, 'AFTER')
-];
+]
 
 /**
  * @description
@@ -101,7 +101,7 @@ let prepend = <A>(arr: A[], sel: SelectList<A>): SelectList<A> => [
   [...arr, ...sel[0]],
   sel[1],
   sel[2]
-];
+]
 
 /**
  * @description
@@ -111,12 +111,12 @@ let append = <A>(arr: A[], sel: SelectList<A>): SelectList<A> => [
   sel[0],
   sel[1],
   [...sel[2], ...arr]
-];
+]
 
 /**
  * @description
  * Returns the entire collection as a single array
  */
-let toArray = <A>(sel: SelectList<A>): A[] => [...sel[0], sel[1], ...sel[2]];
+let toArray = <A>(sel: SelectList<A>): A[] => [...sel[0], sel[1], ...sel[2]]
 
-export { map, select, prepend, append, toArray };
+export { map, select, prepend, append, toArray }

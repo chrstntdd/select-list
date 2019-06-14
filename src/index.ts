@@ -1,6 +1,6 @@
-type Position = 'BEFORE' | 'SELECTED' | 'AFTER';
+type Position = 'BEFORE' | 'SELECTED' | 'AFTER'
 
-type MaybePieces<a> = [a[], a, a[]] | 0;
+type MaybePieces<a> = [a[], a, a[]] | 0
 
 /**
  * @private
@@ -17,33 +17,33 @@ let selectHelp = <A>(
   after: A[]
 ): MaybePieces<A> => {
   // ( [], [] ) ->
-  if (!before.length && !after.length) return 0;
+  if (!before.length && !after.length) return 0
 
   // ( [], head :: rest ) ->
   if (!before.length && after.length) {
-    const [head, ...rest] = after;
+    const [head, ...rest] = after
 
-    if (predicateFn(selected)) return [before, selected, after];
-    else if (predicateFn(head)) return [[...before, selected], head, rest];
+    if (predicateFn(selected)) return [before, selected, after]
+    else if (predicateFn(head)) return [[...before, selected], head, rest]
     else {
-      const mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest);
+      const mP: MaybePieces<A> = selectHelp(predicateFn, [], head, rest)
 
-      if (!mP) return 0;
-      return [[selected, ...mP[0]], mP[1], mP[2]];
+      if (!mP) return 0
+      return [[selected, ...mP[0]], mP[1], mP[2]]
     }
   }
 
   // ( head :: rest, _ ) ->
-  const [head, ...rest] = before;
+  const [head, ...rest] = before
 
-  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]];
+  if (predicateFn(head)) return [[], head, [...rest, selected, ...after]]
   else {
-    const mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after);
+    const mP: MaybePieces<A> = selectHelp(predicateFn, rest, selected, after)
 
-    if (!mP) return 0;
-    return [[head, ...mP[0]], mP[1], mP[2]];
+    if (!mP) return 0
+    return [[head, ...mP[0]], mP[1], mP[2]]
   }
-};
+}
 
 /**
  * @private
@@ -60,11 +60,11 @@ let mapWithPosition = <A, B>(
 ): B[] => {
   for (let i = 0; i < array.length; i++) {
     // @ts-ignore
-    array[i] = callback(array[i], i, position);
+    array[i] = callback(array[i], i, position)
   }
   // @ts-ignore
-  return array;
-};
+  return array
+}
 
 /**
  * @description
@@ -81,31 +81,31 @@ class SelectListImpl<a> {
    * @description
    * The currently selected element
    */
-  public readonly selected: a;
+  public readonly selected: a
 
   /**
    * @description
    * The elements currently in the `before` section of the `SelectList`
    */
-  public readonly before: a[];
+  public readonly before: a[]
 
   /**
    * @description
    * The elements currently in the `after` section of the `SelectList`
    */
-  public readonly after: a[];
+  public readonly after: a[]
 
   /**
    * @description
    * The size of the entire collection
    */
-  public readonly size: number;
+  public readonly size: number
 
   constructor(before: a[], selected: a, after: a[]) {
-    this.before = before;
-    this.selected = selected;
-    this.after = after;
-    this.size = before.length + 1 + after.length;
+    this.before = before
+    this.selected = selected
+    this.after = after
+    this.size = before.length + 1 + after.length
   }
 
   /**
@@ -115,11 +115,11 @@ class SelectListImpl<a> {
    * `SelectList` will not be changed
    */
   public select(predicateFn: (element: a) => boolean): SelectListImpl<a> {
-    const mP = selectHelp(predicateFn, this.before, this.selected, this.after);
+    const mP = selectHelp(predicateFn, this.before, this.selected, this.after)
 
-    if (!mP) return this;
+    if (!mP) return this
 
-    return SelectList(mP[0], mP[1], mP[2]);
+    return SelectList(mP[0], mP[1], mP[2])
   }
 
   /**
@@ -133,7 +133,7 @@ class SelectListImpl<a> {
       mapWithPosition(this.before, fn, 'BEFORE'),
       fn(this.selected, this.before.length, 'SELECTED'),
       mapWithPosition(this.after, fn, 'AFTER')
-    );
+    )
   }
 
   /**
@@ -141,7 +141,7 @@ class SelectListImpl<a> {
    * Add elements to the beginning of the `SelectList`
    */
   public prepend(arr: a[]) {
-    return SelectList([...arr, ...this.before], this.selected, this.after);
+    return SelectList([...arr, ...this.before], this.selected, this.after)
   }
 
   /**
@@ -149,7 +149,7 @@ class SelectListImpl<a> {
    * Add elements to the end of the `SelectList`
    */
   public append(arr: a[]) {
-    return SelectList(this.before, this.selected, [...this.after, ...arr]);
+    return SelectList(this.before, this.selected, [...this.after, ...arr])
   }
 
   /**
@@ -157,7 +157,7 @@ class SelectListImpl<a> {
    * Returns the entire collection as a single array
    */
   public toArray(): a[] {
-    return [...this.before, this.selected, ...this.after];
+    return [...this.before, this.selected, ...this.after]
   }
 }
 
@@ -166,7 +166,7 @@ class SelectListImpl<a> {
  * Wraps call to create new instance of a `SelectList`
  */
 export default function SelectList<a>(before: a[], selected: a, after: a[]) {
-  return new SelectListImpl(before, selected, after);
+  return new SelectListImpl(before, selected, after)
 }
 
 // export * from './pure';
